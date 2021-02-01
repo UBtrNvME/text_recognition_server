@@ -1,0 +1,3 @@
+[submodule "app/dependencies/ctpn_text_detection"]
+	path = app/dependencies/ctpn_text_detection
+	url = https://github.com/ami66/new-text-detection-ctpn.git
