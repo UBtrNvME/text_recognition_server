@@ -13,6 +13,10 @@ RUN apt-get update && \
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
+RUN cd dependencies/ctpn_text_detection/lib/utils && \
+    chmod +x make.sh && \
+    ./make.sh
+
 COPY . ./
 
 CMD uvicorn --host=0.0.0.0 app.main:app
