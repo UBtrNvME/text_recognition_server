@@ -16,12 +16,13 @@ RUN pip install --upgrade pip && \
 
 RUN pip install -r requirements.txt
 
-WORKDIR /dependencies/ctpn_text_detection/lib/utils
+COPY . ./
+
+WORKDIR ./app/dependencies/ctpn_text_detection/lib/utils
 
 RUN chmod +x make.sh && \
     ./make.sh
 
 WORKDIR ../../../..
-COPY . ./
 
 CMD uvicorn --host=0.0.0.0 app.main:app
