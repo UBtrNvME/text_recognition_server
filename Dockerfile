@@ -11,7 +11,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY requirements.txt ./
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip && \
+    pip -V && \
+    pip install -r requirements.txt
 
 RUN cd dependencies/ctpn_text_detection/lib/utils && \
     chmod +x make.sh && \
