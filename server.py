@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 import base64
 import json
 import re
@@ -37,7 +38,7 @@ def recognise():
     paragraph = []
     for x, y, w, h, text in res.copy():
         paragraph.append(text)
-        if re.match(r"([a-z,A-Z,а-я,А-Я]+\s*[.;!?:])", text):
+        if re.match(r"([a-z,A-Z,\u0410-\u042f,\u0430-\u044f]+\s*[\.\;\!\?])", text):
             html_text.append(PARAGRAPH % " ".join(paragraph))
             paragraph = []
 
@@ -65,3 +66,7 @@ def index():
      </div>
     </form>
     """
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
