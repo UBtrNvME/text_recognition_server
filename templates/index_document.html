@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{{ url_for('static', filename='js/document_driver.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_document.css') }}">
+</head>
+<body>
+    <button>Toggle</button>
+    <div class="raw-text-container hide"></div>
+    <div class="container">
+        <img id="doc" src="{{ image }}" class="box" alt="here is image">
+    </div>
+    <div id="data" data-boxes='{{ boxes }}'></div>
+    <div id="data2" data-text="{{ text }}"></div>
+</body>
+</html>

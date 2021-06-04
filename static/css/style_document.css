@@ -1,0 +1,58 @@
+.valid {
+    stroke: green;
+}
+
+.invalid {
+    stroke: red;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    fill: black;
+    fill-opacity: 0.45;
+    stroke: white;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    right: 105%;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+.box {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.container {
+    position: relative;
+    margin: 20px;
+}
+
+.stack-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9;
+}
+
+.hide {
+    display: none;
+}
