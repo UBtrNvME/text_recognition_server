@@ -4,7 +4,7 @@ EXPOSE 5000
 WORKDIR usr/src/app
 
 RUN apt-get update && \
-	apt-get install -y --no-install-recommends tesseract-ocr-eng tesseract-ocr-rus && \
+	apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-eng tesseract-ocr-rus && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN pip install --upgrade pip && \
@@ -18,5 +18,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-ENTRYPOINT ["python"]
-CMD ['server.py']
+CMD ["python3", "server.py"]
