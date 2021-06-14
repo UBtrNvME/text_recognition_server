@@ -35,7 +35,6 @@ class Parser:
 
         self.image = image
         angle, rotated = self._skew_correction()
-        print(angle)
         self.image = rotated
 
     def parse(self):
@@ -58,10 +57,12 @@ class Parser:
         result = []
         frames = self._divide_page_y()
         for frame, y in frames:
+            group = []
             for xframe, x in self._parse_frame(frame):
                 data = pytesseract.image_to_data(
                     xframe, lang="rus+eng", output_type=pytesseract.Output.DICT
                 )
+                vertical = []
                 for xx, yy, w, h, text in zip(
                     data["left"],
                     data["top"],
@@ -71,7 +72,11 @@ class Parser:
                 ):
                     text = text.strip()
                     if text:
-                        result.append([int(xx + x), int(yy + y), int(w), int(h), text])
+                        vertical.append([int(xx + x), int(yy + y), int(w), int(h), text])
+                if len(vertical):
+                    group.append(vertical)
+            if len(group):
+                result.append(group)
         return result
 
     def _divide_page_y(self):
@@ -138,16 +143,16 @@ class Parser:
         return best_angle, rotated
 
     def _find_table_bounds(self):
-        pass
+        raise NotImplementedError("Implement me")
 
     def _get_headers(self, table_loc):
-        pass
+        raise NotImplementedError("Implement me")
 
     def _parse_table(self, table_loc, headers):
-        pass
+        raise NotImplementedError("Implement me")
 
     def _parse_miscelleneous(self, table_loc):
-        pass
+        raise NotImplementedError("Implement me")
 
     def write_excel(self, data):
         workbook = xl.Workbook("result.xlsx")

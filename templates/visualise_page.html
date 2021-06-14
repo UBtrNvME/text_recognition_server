@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{{ url_for('static', filename='js/document_driver.js') }}"></script>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style_document.css') }}">
+</head>
+<body>
+<div class="notebook">
+    <div class="notebook-headers">
+    </div>
+    <div class="notebook-content">
+        {% for image in images %}
+        <div class="notebook__page" id="{{ loop.index }}">
+            <button data-record="{{ loop.index }}">Toggle</button>
+            <div class="notebook__page-image"
+                 id="notebook__page-image_{{ loop.index }}">
+                <img src="{{ image }}" alt="image_{{ loop.index }}">
+            </div>
+            <div class="notebook__page-text hidden" id="notebook__page-text_{{ loop.index }}"></div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<div id="data" data-boxes='{{ boxes }}'></div>
+</body>
+</html>

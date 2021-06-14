@@ -35,13 +35,13 @@
     visibility: visible;
 }
 
-.box {
+.notebook__page-image img {
     position: absolute;
     top: 0;
     left: 0;
 }
 
-.container {
+.notebook__page-image {
     position: relative;
     margin: 20px;
 }
@@ -53,6 +53,6 @@
     z-index: 9;
 }
 
-.hide {
+.hidden {
     display: none;
 }

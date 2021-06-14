@@ -9,11 +9,10 @@ from flask import Flask, render_template, request
 
 from recognition import Parser
 
-# import pdf2image
+import pdf2image
 
 app = Flask(__name__)
 
-PARAGRAPH = "<p>%s</p>"
 LEFT_MARGIN = 220
 
 
@@ -25,29 +24,31 @@ def recognise():
     mimetype = file.mimetype
 
     p = Parser()
+    pages = []
+    res = {"Document": {}}
     if mimetype in ["image/png", "image/jpeg"]:
         nparr = np.fromstring(content, np.uint8)
-        images = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        pages.append(cv2.imdecode(nparr, cv2.IMREAD_COLOR))
+    elif mimetype == "application/pdf":
+        pdf_pages = pdf2image.convert_from_bytes(content)
+        for page in pdf_pages:
+            pages.append(np.array(page))
     else:
         return "%s IS NOT YET IMPLEMENTED" % mimetype.upper()
+    images = []
+    for i, page in enumerate(pages):
+        p.input(page)
+        res["Document"][f"page_{i + 1}"] = p.parse_v2()
+        pages[i] = None
+        img_str = cv2.imencode(".jpg", p.image)[1].tostring()
+        images.append(img_str)
 
-    p.input(images)
-    res = p.parse_v2()
-
-    html_text = []
-    paragraph = []
-    for x, y, w, h, text in res.copy():
-        paragraph.append(text)
-        if re.match(r"([a-z,A-Z,\u0410-\u042f,\u0430-\u044f]+\s*[\.\;\!\?])", text):
-            html_text.append(PARAGRAPH % " ".join(paragraph))
-            paragraph = []
-
-    img_str = cv2.imencode(".jpg", p.image)[1].tostring()
     return render_template(
-        "index_document.html",
-        image=f"data:{mimetype};base64,{base64.b64encode(img_str).decode('utf-8')}",
+        "visualise_page.html",
+        images=[
+                f"data:image/jpeg;base64,{base64.b64encode(image).decode('utf-8')}"
+                for image in images],
         boxes=json.dumps(res),
-        text="".join(html_text),
     )
 
 
