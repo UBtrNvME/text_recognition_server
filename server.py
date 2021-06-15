@@ -2,6 +2,7 @@
 import base64
 import json
 import re
+import xmlrpc.client
 
 import cv2
 import numpy as np
@@ -13,6 +14,11 @@ import pdf2image
 
 app = Flask(__name__)
 
+ODOO_SERVER = "https://ksnf-dev1.qzhub.com"
+ODOO_USERNAME = "service_worker"
+ODOO_PASSWORD = "7RPtYuWUxD2V"
+ODOO_WORKER_PASSWORD = "03101998Aiaienvyme"
+ODOO_DB = "ksnf-dev1"
 LEFT_MARGIN = 220
 
 
@@ -46,9 +52,11 @@ def recognise():
     return render_template(
         "visualise_page.html",
         images=[
-                f"data:image/jpeg;base64,{base64.b64encode(image).decode('utf-8')}"
-                for image in images],
+            f"data:image/jpeg;base64,{base64.b64encode(image).decode('utf-8')}"
+            for image in images
+        ],
         boxes=json.dumps(res),
+        options=json.dumps(get_options()),
     )
 
 
@@ -67,6 +75,37 @@ def index():
      </div>
     </form>
     """
+
+
+def get_options():
+    common = xmlrpc.client.ServerProxy("{}/xmlrpc/2/common".format(ODOO_SERVER))
+    uid = common.authenticate(ODOO_DB, ODOO_USERNAME, ODOO_WORKER_PASSWORD, {})
+    models = xmlrpc.client.ServerProxy("{}/xmlrpc/2/object".format(ODOO_SERVER))
+    return models.execute_kw(
+        ODOO_DB,
+        uid,
+        ODOO_WORKER_PASSWORD,
+        "asset.asset",
+        "search_read",
+        [[], ["id", "name"]],
+    )
+
+
+@app.route("/submit", methods=["POST"])
+def submit():
+    data = request.json
+    common = xmlrpc.client.ServerProxy("{}/xmlrpc/2/common".format(ODOO_SERVER))
+    uid = common.authenticate(ODOO_DB, ODOO_USERNAME, ODOO_WORKER_PASSWORD, {})
+    models = xmlrpc.client.ServerProxy("{}/xmlrpc/2/object".format(ODOO_SERVER))
+    print(data["id"], data["text"])
+    return models.execute_kw(
+        ODOO_DB,
+        uid,
+        ODOO_WORKER_PASSWORD,
+        "asset.asset",
+        "write",
+        [[data["id"]], {"x_description": data["text"]}],
+    )
 
 
 if __name__ == "__main__":

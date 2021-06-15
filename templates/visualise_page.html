@@ -8,24 +8,38 @@
           href="{{ url_for('static', filename='css/style_document.css') }}">
 </head>
 <body>
+<div class="control-panel header">
+    <button id="control-panel__back">Back</button>
+    <button id="control-panel__submit">Submit</button>
+    <select id="control-panel__selection" size="5" name="asset_id">
+    </select>
+</div>
 <div class="notebook">
     <div class="notebook-headers">
+        <ul class="notebook-headers-navigation">
+            {% for image in images %}
+                <li class="notebook-headers-navigation__tab">
+                    <a href="#notebook__page_{{ loop.index }}" class="notebook-headers-navigation__link" role="tab">page {{loop.index}}</a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
     <div class="notebook-content">
         {% for image in images %}
-        <div class="notebook__page" id="{{ loop.index }}">
+        <div class="notebook__page" id="notebook__page_{{ loop.index }}">
             <button data-record="{{ loop.index }}">Toggle</button>
             <div class="notebook__page-image"
                  id="notebook__page-image_{{ loop.index }}">
                 <img src="{{ image }}" alt="image_{{ loop.index }}">
             </div>
-            <div class="notebook__page-text hidden" id="notebook__page-text_{{ loop.index }}"></div>
+            <div class="notebook__page-text hidden"
+                 id="notebook__page-text_{{ loop.index }}"></div>
         </div>
         {% endfor %}
     </div>
 </div>
 
 
-<div id="data" data-boxes='{{ boxes }}'></div>
+<div id="data" data-boxes='{{ boxes }}' data-select_options="{{ options }}"></div>
 </body>
 </html>

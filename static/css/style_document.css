@@ -35,6 +35,25 @@
     visibility: visible;
 }
 
+.notebook-headers-navigation__link {
+    text-decoration: none;
+    background-color: transparent;
+    display: block;
+    padding: 0.5rem 1rem;
+    padding-left: 0;
+}
+
+.notebook-headers-navigation {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+
 .notebook__page-image img {
     position: absolute;
     top: 0;
@@ -43,14 +62,22 @@
 
 .notebook__page-image {
     position: relative;
-    margin: 20px;
+    /*margin: 20px;*/
 }
 
-.stack-top {
+.notebook__page-image svg {
     position: absolute;
     top: 0;
     left: 0;
     z-index: 9;
+}
+
+.notebook__page {
+    display: none;
+}
+
+.notebook__page.active {
+    display: inline !important;
 }
 
 .hidden {

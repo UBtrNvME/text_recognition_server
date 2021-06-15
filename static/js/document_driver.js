@@ -1,13 +1,15 @@
 window.addEventListener("load", () => {
     let data_div = document.getElementById("data")
-
     var bboxes = JSON.parse(data_div.dataset.boxes)
-    // let images = JSON.parse(data_div.dataset.images)
-    // var svg = generateBoundingBoxes(bboxes, doc)
-    // container.appendChild(svg)
-    // document.getElementsByTagName('button')[0].onclick = toggleText
-    // generateNotebookContents(images, bboxes)
+    let options = JSON.parse(data_div.dataset.select_options)
+    generateOptions(options)
     mapNotebookContentsWithSVG(bboxes)
+    document.getElementById("control-panel__submit").onclick = handleSubmit
+    document.getElementById("control-panel__back").onclick = (ev) => {
+        ev.preventDefault()
+        ev.stopPropagation()
+        location.href = `http://${window.location.hostname}/`
+    }
 });
 
 const generateBoundingBoxes = (boxes, image) => {
@@ -30,7 +32,6 @@ const generateBoundingBoxes = (boxes, image) => {
     })
     let rect = image.getBoundingClientRect();
     // svg.setAttribute("style", `position: absolute; top:${rect.top}px; left:${rect.left}px`)
-    svg.setAttribute("class", `stack-top`)
     // svg.setAttribute("style", `float: left; margin-right: -100%; position: relative;`)
     return svg
 };
@@ -77,6 +78,16 @@ function generateText(svg) {
     return arr.join("\n")
 }
 
+function generateOptions(options) {
+    fieldSelection = document.getElementById("control-panel__selection")
+    options.forEach(elem => {
+        const option = document.createElement("option")
+        option.setAttribute("value", elem.id)
+        option.innerText = elem.name
+        fieldSelection.appendChild(option)
+    })
+}
+
 // function generateTextContainer(svg, index) {
 //     const text = generateText(svg)
 //     const textContainer = document.createElement("div")
@@ -121,18 +132,49 @@ function generateText(svg) {
 
 function mapNotebookContentsWithSVG(bboxes) {
     const pages = document.getElementsByClassName("notebook__page")
+    const links = document.getElementsByClassName("notebook-headers-navigation__link")
     for (let i = 0; i < pages.length; i++) {
         const page = pages[i]
+        links[i].onclick = (event) => {
+            event.preventDefault()
+            document.getElementsByClassName("notebook__page active")[0].classList.toggle("active")
+            document.getElementById(page.id).classList.toggle("active")
+        }
         const imageContainer = page.getElementsByClassName("notebook__page-image")[0]
-        console.log(bboxes["Document"][`page_${i + 1}`])
         const svg = generateBoundingBoxes(bboxes["Document"][`page_${i + 1}`], imageContainer.children[0])
-        const text = page.getElementsByClassName("notebook__page-text")
+        const text = page.getElementsByClassName("notebook__page-text")[0]
         text.innerHTML = generateText(svg)
         imageContainer.appendChild(svg)
-        page.getElementsByTagName("button")[0].onclick = () => {
-            console.log(`button ${i}`)
-            imageContainer.classList.toggle("hide")
-            text.classList.toggle("hide")
+        const idImage = imageContainer.id
+        const idText = text.id
+        page.getElementsByTagName("button")[0].onclick = (event) => {
+            event.preventDefault()
+            document.getElementById(idImage).classList.toggle("hidden")
+            document.getElementById(idText).classList.toggle("hidden")
         }
     }
+    pages[0].classList.toggle("active")
+}
+
+function handleSubmit() {
+    let atext = []
+    for (const elem in document.getElementsByClassName("notebook__page-text")) {
+        atext.push(elem)
+    }
+    const select = document.getElementById("control-panel__selection")
+    let assetId = select.selectElement.options[select.selectedIndex].value
+    fetch(`http://${window.location.hostname}/submit`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            id: assetId,
+            text: atext
+        })
+    }).then(res => {
+        console.log("success")
+    }).catch(error => {
+        console.log("some error")
+    })
 }
